@@ -1,30 +1,34 @@
-# Sample Credential Provider App
+# Sample Credential Provider (Python)
 
-This application shows a sample implementation of a BigID app that supplies credentials from a credential vault.
+A minimal Flask TPA sample showing the shape of a credential-provider app. It does **not** connect to a real vault: the `vault` action recognizes one demonstration query and returns placeholder credentials; all other queries return an error.
 
-**This sample application does not implement any security and should not be exposed to the wider internet**
+## API
 
-## Setup
+- `GET /manifest` advertises the `vault` action.
+- `POST /execute` handles that action and returns the sample credential result.
 
-Install dependencies with pip install:
+## Run locally
 
-`pip3 install -r requirements.txt`
+Requires Python 3 and pip.
 
-run the application by running:
+```sh
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+python3 app.py
+```
 
-`python3 app.py`
+The direct Python entry point listens on `0.0.0.0:3000`.
 
-The application will then be accessible on port 3000.
+A Docker image can be built with `docker build -t credential-provider .`. The included Dockerfile starts Flask’s CLI, whose default port is **5000**:
 
-## Customization
+```sh
+docker run --rm -p 5000:5000 credential-provider
+```
 
-By default this application will provide the username password combination user:pass when passed the query "test" from BigID. 
+## Security and limitations
 
-Edit line 32 of app.py to change that behavior.
-
-## Deployment
-
-A dockerfile is included to build this application inside your own infra.
+This sample has no authentication or production vault integration and prints the requested lookup value to its logs. It is intentionally unsuitable for internet exposure. Replace the demonstration lookup with a secured secret manager integration before use; never return or log real credentials unnecessarily.
 
 <!-- bigidsecure-community-guidance -->
 ## BigID Community
